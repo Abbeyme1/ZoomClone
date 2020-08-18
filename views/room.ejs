@@ -1,10 +1,13 @@
 <html>
   <head>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
     <link href="style.css" rel="stylesheet" type="text/css" />
     <meta charset="UTF-8" />
     <title>ZOOM CLONE</title>
-    <script src=""></script>
+    <script>
+      const ROOM_ID = "<%= roomId %>";
+    </script>
   </head>
   <body>
     <div id="video-grid"></div>
