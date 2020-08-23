@@ -1,14 +1,12 @@
 const socket = io("/");
-const myVideo = document.createElement("video");
 const videoGrid = document.getElementById("video-grid");
-myVideo.muted = true;
-
-var peer = new Peer(undefined, {
-  path: "/peerjs",
+const myPeer = new Peer(undefined, {
   host: "/",
-  port: "3000",
+  port: "3001",
 });
-
+const myVideo = document.createElement("video");
+myVideo.muted = true;
+const peers = {};
 navigator.mediaDevices
   .getUserMedia({
     video: true,
@@ -17,36 +15,48 @@ navigator.mediaDevices
   .then((stream) => {
     addVideoStream(myVideo, stream);
 
-    peer.on("call", (call) => {
+    myPeer.on("call", (call) => {
+      console.log("Receiving");
       call.answer(stream);
-      const video = document.createElement("video"); // Answer the call with an A/V stream.
+      const video = document.createElement("video");
       call.on("stream", (userVideoStream) => {
         addVideoStream(video, userVideoStream);
-        // Show stream in some video/canvas element.
       });
     });
 
     socket.on("user-connected", (userId) => {
-      connectToNewUser(userId, stream);
+      setTimeout(() => {
+        connectToNewUser(userId, stream);
+      }, 1000);
     });
   });
 
-peer.on("open", (id) => {
+socket.on("user-disconnected", (userId) => {
+  if (peers[userId]) peers[userId].close();
+});
+
+myPeer.on("open", (id) => {
   socket.emit("join-room", ROOM_ID, id);
 });
 
-const connectToNewUser = (userId, stream) => {
-  const call = peer.call(userId, stream);
+function connectToNewUser(userId, stream) {
+  const call = myPeer.call(userId, stream);
   const video = document.createElement("video");
   call.on("stream", (userVideoStream) => {
+    console.log("calling");
     addVideoStream(video, userVideoStream);
   });
-};
+  call.on("close", () => {
+    video.remove();
+  });
 
-const addVideoStream = (video, stream) => {
+  peers[userId] = call;
+}
+
+function addVideoStream(video, stream) {
   video.srcObject = stream;
   video.addEventListener("loadedmetadata", () => {
     video.play();
   });
   videoGrid.append(video);
-};
+}
