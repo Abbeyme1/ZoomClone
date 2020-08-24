@@ -104,6 +104,11 @@
         border-radius: 5px;
       }
 
+      .unmute,
+      .stop {
+        color: #cc3b33;
+      }
+
       .leaveMeeting {
         color: #eb534b;
       }
@@ -115,6 +120,12 @@
 
       .chatWindow {
         flex-grow: 1;
+        overflow-y: scroll;
+      }
+
+      .messages {
+        color: #f5f5f5;
+        font-size: 0.8rem;
       }
 
       .messageContainer {
@@ -138,12 +149,12 @@
         </div>
         <div class="controls">
           <div class="controlsBlock">
-            <div class="btn">
+            <div class="btn muteBtn" onclick="muteUnmute()">
               <i class="fas fa-microphone"></i>
               <!-- <i class="fas fa-microphone-slash"></i> -->
               <span>Mute</span>
             </div>
-            <div class="btn">
+            <div class="btn videoBtn" onclick="startStop()">
               <i class="fas fa-video-slash"></i>
               <!-- <i class="fas fa-video"></i> -->
               <span>Stop Video</span>
@@ -165,7 +176,7 @@
           </div>
 
           <div class="controlsBlock">
-            <div class="btn">
+            <div class="btn" onclick="disconnect()">
               <span class="leaveMeeting">Leave Meeting</span>
             </div>
           </div>
